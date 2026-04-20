@@ -1,0 +1,27 @@
+# Create .gitignore if it doesn't exist
+cat > .gitignore << 'EOF'
+# Terraform
+.terraform/
+terraform.tfstate*
+terraform.tfstate.*.backup
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+.terraform.lock.hcl
+.terraformrc
+terraform.rc
+*.backup
+*.log
+
+# Sensitive files
+*.pem
+*.key
+*.cert
+
+# OS files
+.DS_Store
+Thumbs.db
+EOF
