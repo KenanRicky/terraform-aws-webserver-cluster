@@ -1,23 +1,28 @@
-# VARIABLE CODE
-
 variable "cluster_name" {
-  description = "Name of the webserver cluster"
+  description = "The name to use for all cluster resources"
   type        = string
 }
 
-variable "ami_id" {
-  description = "AMI ID for EC2 instances"
+variable "instance_type" {
+  description = "EC2 instance type for the cluster"
   type        = string
+  default     = "t2.micro"
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs (at least 2 in different AZs)"
-  type        = list(string)
-  
-  validation {
-    condition     = length(var.subnet_ids) >= 2
-    error_message = "At least 2 subnet IDs must be provided for high availability."
-  }
+variable "min_size" {
+  description = "Minimum number of EC2 instances in the ASG"
+  type        = number
+}
+
+variable "max_size" {
+  description = "Maximum number of EC2 instances in the ASG"
+  type        = number
+}
+
+variable "server_port" {
+  description = "Port the server uses for HTTP"
+  type        = number
+  default     = 8080
 }
 
 variable "vpc_id" {
@@ -25,37 +30,7 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "min_size" {
-  description = "Minimum number of instances in Auto Scaling Group"
-  type        = number
-  default     = 1
-}
-
-variable "max_size" {
-  description = "Maximum number of instances in Auto Scaling Group"
-  type        = number
-}
-
-variable "desired_capacity" {
-  description = "Desired number of instances in Auto Scaling Group"
-  type        = number
-  default     = 1
-}
-
-variable "instance_type" {
-  description = "EC2 instance type"
-  type        = string
-  default     = "t2.micro"
-}
-
-variable "environment" {
-  description = "Environment name (e.g., dev, staging, prod)"
-  type        = string
-  default     = "dev"
-}
-
-variable "security_group_ids" {
-  description = "Additional security group IDs for the instances"
+variable "subnet_ids" {
+  description = "List of subnet IDs for the ASG and ALB"
   type        = list(string)
-  default     = []
 }
