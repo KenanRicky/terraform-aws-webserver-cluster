@@ -64,6 +64,62 @@ Internet → ALB (Port 80) → Target Group → Auto Scaling Group → EC2 Insta
                                     ↓
                               Health Checks (HTTP:8080/)
 
+Known Limitations & Gotchas
+1. Minimum Subnet Requirements
+The module requires at least 2 subnets in different Availability Zones for the ALB
+
+Subnets must be public (with internet gateway) or have proper routing for internet access
+
+All subnets must belong to the same VPC
+
+2. Default Web Server
+The module uses busybox httpd as a simple web server
+
+For production, replace the user_data with your actual application deployment
+
+The default server only serves static content from index.html
+
+3. Health Check Configuration
+Health checks expect HTTP 200 response on the root path (/)
+
+If your application uses a different health endpoint, modify the aws_lb_target_group resource
+
+Instances may be marked unhealthy if the server takes >5 seconds to respond
+
+4. Security Group Rules
+Instance security group allows inbound traffic from anywhere (0.0.0.0/0)
+
+For production, restrict inbound CIDR blocks to your organization's IP ranges
+
+ALB security group allows HTTP (port 80) from anywhere
+
+5. AMI Selection
+Uses Amazon Linux 2 AMI (hardcoded query)
+
+Different AWS regions may have different AMI IDs
+
+Consider making AMI ID configurable for cross-region deployments
+
+6. Scaling Behavior
+Desired capacity is set to min_size by default
+
+No auto-scaling policies are configured (scale based on CPU/memory if needed)
+
+Manual scaling requires updating min_size and max_size and reapplying
+
+7. Cost Considerations
+ALB costs ~$16-20/month + data transfer
+
+Each EC2 instance incurs hourly charges
+
+t2/t3 instances are not free tier eligible in some regions
+
+8. State Management
+This module creates multiple resources; consider using remote state (S3 + DynamoDB)
+
+Destroying the module will delete all associated resources including EC2 instances
+
+
 
                               Troubleshooting
 Issue: "At least two subnets in two different Availability Zones must be specified"
